@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  design.cardia.game.catan.configuration.CardiaCatanEngineAutoConfiguration
