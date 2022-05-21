@@ -12,7 +12,6 @@ import design.cardia.game.catan.repository.IReadRepository
 import design.cardia.game.catan.repository.IWriteRepository
 import design.cardia.game.engine.event.Event
 import design.cardia.game.engine.event.EventProcessor
-import java.util.UUID
 
 class CatanEventProcessor(
     private val writeRepository: IWriteRepository,
@@ -38,39 +37,32 @@ class CatanEventProcessor(
     }
 
     private fun process(event: SettlementBuiltEvent) {
-        val game = getCatanGame(event.gameId) ?: return
-        game.players[event.player]?.placedSettlements?.add(event.corner)
-        game.board.corners.values
-            .firstOrNull { it.id == event.corner }
+        readRepository.getPlayerById(event.gameId, event.player)
+            ?.placedSettlements?.add(event.corner)
+        readRepository.getCornerById(event.gameId, event.corner)
             ?.content = Building(event.player, "Settlement")
     }
 
     private fun process(event: RoadBuiltEvent) {
-        val game = getCatanGame(event.gameId) ?: return
-        game.players[event.player]?.placedRoads?.add(event.edge)
-        game.board.edges.values
-            .firstOrNull { it.id == event.edge }
-            ?.let {
-                if (!it.hasRoad) {
-                    it.player = event.player
-                    it.hasRoad = true
-                }
+        readRepository.getPlayerById(event.gameId, event.player)
+            ?.placedRoads?.add(event.edge)
+        readRepository.getEdgeById(event.gameId, event.edge)?.let {
+            if (!it.hasRoad) {
+                it.player = event.player
+                it.hasRoad = true
             }
+        }
     }
 
     private fun process(event: CardDrawnEvent) {
-        val game = getCatanGame(event.gameId) ?: return
+        val game = readRepository.getGameById(event.gameId) ?: return
         game.developmentDeck.minus(event.card)
-        game.players[event.player]?.cards?.plus(event.card)
+        readRepository.getPlayerById(event.gameId, event.player)
+            ?.cards?.plus(event.card)
     }
 
     private fun process(event: ControlPassedEvent) {
-        val game = getCatanGame(event.gameId) ?: return
+        val game = readRepository.getGameById(event.gameId) ?: return
         game.currentPlayer = event.nextPlayer
-    }
-
-    private fun getCatanGame(gameId: UUID): Catan? {
-        val game = readRepository.getGameById(gameId)
-        return if (game is Catan) game else null
     }
 }

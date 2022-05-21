@@ -7,7 +7,7 @@ class Catan(
     id: UUID,
     var currentPlayer: UUID,
     var board: Board,
-    var players: Map<UUID, Player>,
+    var players: List<Player>,
     var yellowDie: UInt,
     var redDie: UInt,
     var developmentDeck: DevelopmentDeck

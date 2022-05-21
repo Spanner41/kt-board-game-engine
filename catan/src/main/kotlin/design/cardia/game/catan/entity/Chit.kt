@@ -5,7 +5,7 @@ import java.util.UUID
 class Chit(
     val id: UUID,
     val value: Int,
-    var tile: Tile? = null
+    var tile: UUID? = null
 ) {
     init {
         require((2..12).contains(value))

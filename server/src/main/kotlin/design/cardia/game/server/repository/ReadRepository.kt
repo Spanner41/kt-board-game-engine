@@ -14,4 +14,12 @@ class ReadRepository(
     }
 
     override fun getGameById(id: UUID) = games[id]
+
+    override fun getPlayerById(gameId: UUID, playerId: UUID) = games[gameId]?.players?.firstOrNull { it.id == playerId }
+
+    override fun getCornerById(gameId: UUID, cornerId: UUID) = games[gameId]?.board?.corners?.firstOrNull { it.id == cornerId }
+
+    override fun getEdgeById(gameId: UUID, edgeId: UUID) = games[gameId]?.board?.edges?.firstOrNull { it.id == edgeId }
+
+    override fun getTileById(gameId: UUID, tileId: UUID) = games[gameId]?.board?.tiles?.firstOrNull { it.id == tileId }
 }
